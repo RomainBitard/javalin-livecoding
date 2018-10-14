@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+
+<button>Connect</button>
+<ul></ul>
+
+<script>
+    const list = document.querySelector("ul");
+    document.querySelector("button").onclick = () => {
+        const ws = new WebSocket(`ws://${document.location.host}/ws/clock`);
+        ws.onmessage = event =>
+            list.innerHTML += `<li>${event.data}</li>`;
+    };
+</script>
+</body>
+</html>
