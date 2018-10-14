@@ -1,6 +1,7 @@
 package org.ilaborie
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.javalin.Context
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
@@ -35,5 +36,14 @@ fun main(args: Array<String>) {
                 }
             }
         }
+        // handle errors
+        .exception { e: NoSuchElementException, ctx ->
+            ctx.status(404).result(e.message ?: "Oops!")
+        }
         .start(8080)
 }
+
+
+// Kotlin Magic
+inline fun <reified T : Exception> Javalin.exception(noinline block: (T, Context) -> Unit): Javalin =
+    this.exception(T::class.java, block)
