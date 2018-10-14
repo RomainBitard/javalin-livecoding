@@ -1,5 +1,6 @@
 package org.ilaborie
 
+import io.javalin.Javalin
 
 fun main(args: Array<String>) {
     println("Hello, Toulouse, Jug")
@@ -7,12 +8,8 @@ fun main(args: Array<String>) {
     // TODO Javalin Hello World
     // @see https://javalin.io/documentation
 
-    // TODO configuration
-
-    // TODO routing
-
-    // TODO handle errors
-
-    // TODO Static & WebSocket
+    Javalin.create()
+        .get("/") { it.result("Hello, Toulouse JUG") }
+        .start(8080)
 }
 
