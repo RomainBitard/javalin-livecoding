@@ -9,7 +9,10 @@ fun main(args: Array<String>) {
     // @see https://javalin.io/documentation
 
     Javalin.create()
-        .get("/") { it.result("Hello, Toulouse JUG") }
+        // configuration
+        .disableStartupBanner()
+        .enableCorsForAllOrigins() // 😱 FIXME
+        .enableDebugLogging()
+        .get("/") { it.result("Hello, Toulouse JUG")}
         .start(8080)
 }
-
