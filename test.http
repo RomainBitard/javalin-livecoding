@@ -17,3 +17,5 @@ POST http://localhost:8080/api/emoji/
 
 ### Find by name (error)
 GET http://localhost:8080/api/emoji/pig
+
+###
