@@ -1,4 +1,6 @@
 [WIP] Introduction des concepts clefs de Kotlin par la pratique
+
+
 En vrac
   val / var
   ?. ?:
