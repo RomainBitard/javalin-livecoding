@@ -12,7 +12,6 @@ object EmojiRepository {
         setOf(
             Emoji("cat", "😸"),
             Emoji("dog", "🐕"),
-            Emoji("monkey", "🐒")
         )
     )
 
