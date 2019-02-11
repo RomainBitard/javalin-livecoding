@@ -21,7 +21,7 @@ object EmojiRepository {
     fun findByName(name: String) =
         all.get()
             .find { it.name == name }
-            ?: throw NoSuchElementException("No emoji for '$name'")
+            ?: throw NoSuchElementException("No emoji for '$name'") // change by null to illustrate NPE problem in Java
 
     fun insert(emoji: Emoji): Set<Emoji> =
         all.updateAndGet { it + emoji }
