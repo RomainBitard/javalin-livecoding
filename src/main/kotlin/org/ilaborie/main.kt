@@ -1,67 +1,69 @@
 package org.ilaborie
+package org.rbitard
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.get
-import io.javalin.apibuilder.ApiBuilder.path
-import io.javalin.apibuilder.ApiBuilder.post
-import io.javalin.json.JavalinJackson
+import io.javalin.apibuilder.ApiBuilder.*
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
+
 fun main(args: Array<String>) {
-    println("Hello, Toulouse, Jug")
-
     // TODO Javalin Hello World
-    // @see https://javalin.io/documentation
-
-    JavalinJackson.configure(jacksonObjectMapper())
-
+    // Java syntax vs Kotlin comparison (DSL, it)
     Javalin.create()
-        // configuration
-        .disableStartupBanner()
-        .enableCorsForAllOrigins() // 😱 FIXME
-        .enableDebugLogging()
-        // routing
-        .routes {
-            path("/api/emoji") {
-                get("/") { it.json(EmojiRepository.findAll()) }
-                get(":name") { ctx ->
-                    val name = ctx.pathParam("name")
-                    val result = EmojiRepository.findByName(name)
-                    ctx.json(result)
-                }
-                post("/") { ctx ->
-                    val emoji = ctx.body<Emoji>()
-                    ctx.json(EmojiRepository.insert(emoji))
+            .get("/hello") {
+                it.json("Hello Toulouse")
+            }
+            // TODO Configuration
+            .disableStartupBanner()
+            .enableDebugLogging()
+            // TODO routing
+            // @see https://javalin.io/documentation
+            // routes, path, get, post in DSL
+            .routes {
+                path("api/emoji") {
+                    get("/") {
+                        it.json(EmojiRepository.findAll())
+                    }
+                    get(":name") {
+                        val pathParam = it.pathParam("name")
+                        it.json(EmojiRepository.findByName(pathParam))
+                    }
+                    post("/") {
+                        val emoji = it.body<Emoji>()
+                        it.json(EmojiRepository.insert(emoji))
+                    }
                 }
             }
-        }
-        // handle errors
-        .exception(NoSuchElementException::class.java) { e, ctx ->
-            ctx.status(404).result(e.message ?: "Oops!")
-        }
-        // Static & WebSocket
-        .enableStaticFiles("public")
-        .ws("/ws/clock") { wsHandler ->
-            val ec = Executors.newSingleThreadScheduledExecutor()
-            wsHandler.onConnect { session ->
-                ec.setInterval(1.second) {
-                    session.send(Instant.now().toString())
+            // TODO handle errors
+            // ? and ?: null safety, modify emoji implementation to generate NPE
+            .exception(NoSuchElementException::class.java) {
+                noSuchElementException, context ->
+                context.status(404).result(noSuchElementException.message ?: "No such element")
+            }
+            // TODO Static & WebSocket
+            // Executors - Schedulers example, extension property, extension function
+            .enableStaticFiles("public")
+            .ws("/ws/clock") {
+                wsHandler ->
+                val executor = Executors.newSingleThreadScheduledExecutor()
+                wsHandler.onConnect {
+                    executor.setInterval(1.seconds) {
+                        it.send(Instant.now().toString())
+                    }
                 }
             }
-        }
-        .start(8080)
+            .start(8080)
 }
 
 
-// Kotlin Magic
-val Int.second
+val Int.seconds
     get() = Duration.ofSeconds(this.toLong())
 
 fun ScheduledExecutorService.setInterval(duration: Duration, delay: Duration = Duration.ZERO, function: () -> Unit) =
-    this.scheduleAtFixedRate(function, delay.toMillis(), duration.toMillis(), TimeUnit.MILLISECONDS)
+        this.scheduleAtFixedRate(function, delay.toMillis(), duration.toMillis(), TimeUnit.MILLISECONDS)
+
 
