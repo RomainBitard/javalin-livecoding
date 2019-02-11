@@ -1,5 +1,5 @@
 package org.ilaborie
-package org.rbitard
+
 
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
